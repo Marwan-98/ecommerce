@@ -10,7 +10,8 @@ export interface Product {
 }
 
 export interface CartItem extends Product {
-  quantity: number
+  quantity: number,
+  size: string
 }
 
 export type Category = {

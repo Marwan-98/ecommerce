@@ -1,5 +1,8 @@
 import type { NextPage } from 'next'
 import Layout from 'components/layout'
+import { products, setProducts } from 'store/slices/productsSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
 
 const collections = [
   {
@@ -69,6 +72,11 @@ const perks = [
 ]
 
 const Home: NextPage = () => {
+  const Allproducts = useSelector(products);
+  const dispatch = useDispatch()
+  useEffect(() => {
+    fetch("http://localhost:3000/api/products").then(res => res.json()).then(json => dispatch(setProducts(json)))
+  }, [])
   return (
     <div className="">
       <Layout>
@@ -191,7 +199,7 @@ const Home: NextPage = () => {
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-4 md:gap-y-0 lg:gap-x-8">
-                {trendingProducts.map((product) => (
+                {Allproducts.map((product) => (
                   <div key={product.id} className="group relative">
                     <div className="h-56 w-full overflow-hidden rounded-md group-hover:opacity-75 lg:h-72 xl:h-80">
                       <img

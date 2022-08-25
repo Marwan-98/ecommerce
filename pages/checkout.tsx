@@ -2,8 +2,13 @@ import { RadioGroup } from '@headlessui/react'
 import { CheckCircleIcon, TrashIcon } from '@heroicons/react/solid'
 import Dropdown from 'components/dropdown'
 import Layout from 'components/layout'
+import { useFormik } from 'formik'
+import * as yup from 'yup';
 import { classNames } from 'lib'
 import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { addToTotal, cartItems, cartTotal, changeQuantity, removeProduct } from 'store/slices/cartSlice'
+import axios from 'axios'
 
 const products = [
   {
@@ -52,6 +57,46 @@ export default function Example() {
   const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(
     deliveryMethods[0]
   )
+  const total = useSelector(cartTotal);
+  const AllcartItems = useSelector(cartItems);
+  const dispatch = useDispatch()
+
+  const formik = useFormik({
+    initialValues: {
+      'email-address': '',
+      'first-name': '',
+      'last-name': '',
+      'company': '',
+      'address': '',
+      'apartment': '',
+      'city': '',
+      'country': '',
+      'region': '',
+      'delivery-method': selectedDeliveryMethod,
+      'payment-type': '',
+      'postal-code': '',
+      'phone': '',
+      'card-number': '',
+      'name-on-card': '',
+      'expiration-date': '',
+      'cvc': ''
+    },
+    onSubmit: (values) => {
+      axios.post("http://localhost:3000/api/hello", {
+        firstName: values['first-name'],
+          lastName: values['last-name'],
+          email: values['email-address'],
+          company: values['company'],
+          phone: values['phone'],
+          address: values['address'],
+          apartment: values['apartment'],
+          city: values['city'],
+          region: values['region'],
+          country: values['country'],
+      }).then((res) => console.log(res))
+    },
+    validationSchema: yup.object({}),
+  });
 
   return (
     <Layout>
@@ -60,7 +105,7 @@ export default function Example() {
           <div className="mx-auto max-w-2xl lg:max-w-none">
             <h1 className="sr-only">Checkout</h1>
 
-            <form className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
+            <form className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16" onSubmit={formik.handleSubmit}>
               <div>
                 <div>
                   <h2 className="text-lg font-medium text-gray-900">
@@ -77,6 +122,8 @@ export default function Example() {
                     <div className="mt-1">
                       <input
                         type="email"
+                        value={formik.values['email-address']}
+                        onChange={formik.handleChange}
                         id="email-address"
                         name="email-address"
                         autoComplete="email"
@@ -102,6 +149,12 @@ export default function Example() {
                       <div className="mt-1">
                         <input
                           type="text"
+                          value={formik.values['first-name']}
+
+
+
+                          onChange={formik.handleChange}
+
                           id="first-name"
                           name="first-name"
                           autoComplete="given-name"
@@ -120,6 +173,12 @@ export default function Example() {
                       <div className="mt-1">
                         <input
                           type="text"
+                          value={formik.values['last-name']}
+
+
+
+                          onChange={formik.handleChange}
+
                           id="last-name"
                           name="last-name"
                           autoComplete="family-name"
@@ -138,6 +197,12 @@ export default function Example() {
                       <div className="mt-1">
                         <input
                           type="text"
+                          value={formik.values['company']}
+
+
+
+                          onChange={formik.handleChange}
+
                           name="company"
                           id="company"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -155,6 +220,12 @@ export default function Example() {
                       <div className="mt-1">
                         <input
                           type="text"
+                          value={formik.values['address']}
+
+
+
+                          onChange={formik.handleChange}
+
                           name="address"
                           id="address"
                           autoComplete="street-address"
@@ -173,6 +244,12 @@ export default function Example() {
                       <div className="mt-1">
                         <input
                           type="text"
+                          value={formik.values['apartment']}
+
+
+
+                          onChange={formik.handleChange}
+
                           name="apartment"
                           id="apartment"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -190,6 +267,12 @@ export default function Example() {
                       <div className="mt-1">
                         <input
                           type="text"
+                          value={formik.values['city']}
+
+
+
+                          onChange={formik.handleChange}
+
                           name="city"
                           id="city"
                           autoComplete="address-level2"
@@ -209,6 +292,8 @@ export default function Example() {
                         <select
                           id="country"
                           name="country"
+                          value={formik.values['country']}
+                          onChange={formik.handleChange}
                           autoComplete="country-name"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         >
@@ -229,6 +314,12 @@ export default function Example() {
                       <div className="mt-1">
                         <input
                           type="text"
+                          value={formik.values['region']}
+
+
+
+                          onChange={formik.handleChange}
+
                           name="region"
                           id="region"
                           autoComplete="address-level1"
@@ -248,6 +339,12 @@ export default function Example() {
                         <input
                           type="text"
                           name="postal-code"
+                          value={formik.values['postal-code']}
+
+
+
+                          onChange={formik.handleChange}
+
                           id="postal-code"
                           autoComplete="postal-code"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -265,6 +362,8 @@ export default function Example() {
                       <div className="mt-1">
                         <input
                           type="text"
+                          value={formik.values['phone']}
+                          onChange={formik.handleChange}
                           name="phone"
                           id="phone"
                           autoComplete="tel"
@@ -279,6 +378,7 @@ export default function Example() {
                   <RadioGroup
                     value={selectedDeliveryMethod}
                     onChange={setSelectedDeliveryMethod}
+                    name="delivery-method"
                   >
                     <RadioGroup.Label className="text-lg font-medium text-gray-900">
                       Delivery method
@@ -364,6 +464,8 @@ export default function Example() {
                               id={paymentMethod.id}
                               name="payment-type"
                               type="radio"
+                              onClick={formik.handleChange}
+                              value={paymentMethod.title}
                               defaultChecked
                               className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
                             />
@@ -372,9 +474,11 @@ export default function Example() {
                               id={paymentMethod.id}
                               name="payment-type"
                               type="radio"
+                              onClick={formik.handleChange}
+                              value={paymentMethod.title}
                               className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                            />
-                          )}
+                              />
+                              )}
 
                           <label
                             htmlFor={paymentMethod.id}
@@ -399,6 +503,12 @@ export default function Example() {
                         <input
                           type="text"
                           id="card-number"
+                          value={formik.values['card-number']}
+
+
+
+                          onChange={formik.handleChange}
+
                           name="card-number"
                           autoComplete="cc-number"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -417,6 +527,11 @@ export default function Example() {
                         <input
                           type="text"
                           id="name-on-card"
+                          value={formik.values['name-on-card']}
+
+
+                          onChange={formik.handleChange}
+
                           name="name-on-card"
                           autoComplete="cc-name"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -435,6 +550,10 @@ export default function Example() {
                         <input
                           type="text"
                           name="expiration-date"
+                          value={formik.values['expiration-date']}
+
+                          onChange={formik.handleChange}
+
                           id="expiration-date"
                           autoComplete="cc-exp"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -452,6 +571,9 @@ export default function Example() {
                       <div className="mt-1">
                         <input
                           type="text"
+                          value={formik.values['cvc']}
+                          onChange={formik.handleChange}
+
                           name="cvc"
                           id="cvc"
                           autoComplete="csc"
@@ -472,7 +594,7 @@ export default function Example() {
                 <div className="mt-4 rounded-lg border border-gray-200 bg-white shadow-sm">
                   <h3 className="sr-only">Items in your cart</h3>
                   <ul role="list" className="divide-y divide-gray-200">
-                    {products.map((product) => (
+                    {AllcartItems.map((product) => (
                       <li key={product.id} className="flex py-6 px-4 sm:px-6">
                         <div className="flex-shrink-0">
                           <img
@@ -490,7 +612,7 @@ export default function Example() {
                                   href={product.href}
                                   className="font-medium text-gray-700 hover:text-gray-800"
                                 >
-                                  {product.title}
+                                  {product.name}
                                 </a>
                               </h4>
                               <p className="mt-1 text-sm text-gray-500">
@@ -510,6 +632,10 @@ export default function Example() {
                                 <TrashIcon
                                   className="h-5 w-5"
                                   aria-hidden="true"
+                                  onClick={() => {
+                                    dispatch(removeProduct(product.id))
+                                    dispatch(addToTotal(-Number(product.price.replace(/[^0-9.]/g, "")) * product.quantity))
+                                  }}
                                 />
                               </button>
                             </div>
@@ -525,8 +651,8 @@ export default function Example() {
                                 Quantity
                               </label>
                               <Dropdown
-                                onChange={(value) => {
-                                  console.log('hello world' + value)
+                                onChange={(e) => {
+                                  dispatch(changeQuantity({ id: product.id, quantity: +e }))
                                 }}
                                 values={Array.from(
                                   Array(product.availableQty),
@@ -561,7 +687,7 @@ export default function Example() {
                     <div className="flex items-center justify-between border-t border-gray-200 pt-6">
                       <dt className="text-base font-medium">Total</dt>
                       <dd className="text-base font-medium text-gray-900">
-                        $75.52
+                        ${total}
                       </dd>
                     </div>
                   </dl>
@@ -583,3 +709,4 @@ export default function Example() {
     </Layout>
   )
 }
+
