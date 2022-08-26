@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { extractSheets } from "spreadsheet-to-json";
 import {Buffer} from 'buffer/'
-import { Product } from 'types';
+import { Image, Product } from 'types';
 
 const credentials = JSON.parse(
   Buffer.from(process.env.GOOGLE_SERVICE_KEY!, 'base64').toString()
@@ -19,14 +19,22 @@ export default async function handler(
         {
           spreadsheetKey: "1GSLrLTt1dya45r9NYXUQeEUPp_Q_Fn1x-gGgrH3UzTI",
           credentials: credentials,
-          sheetsToExtract: ["Products"],
+          sheetsToExtract: ["Products", "ImageSheet"],
         },
-        function(err: any, data: {Products: Product[]}) {
+        function(err: any, data: {Products: Product[], ImageSheet: Image[]}) {
           if(err) {
             return res.json(err)
           }
           const findProduct = data.Products.find(product => +product.id === +id!);
-          return res.send(findProduct!);
+          const findImages = data.ImageSheet.filter(image => +image.productId! === +id!);
+          console.log(findImages);
+          return res.send({...findProduct!, images: findImages.map(image => {
+            return {
+            src: image.src, alt: image.alt
+            }
+        }),
+        colors: [],
+      sizes: []});
         }
       );
     default:

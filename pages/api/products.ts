@@ -21,7 +21,7 @@ export default async function handler(
           sheetsToExtract: ["Products"],
           // formatCell: formatCell
         },
-        function(err: any, data: any) {
+        function(err: any, data: {Products: Product[]}) {
           if(err) {
             return res.json(err)
           }

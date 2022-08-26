@@ -72,7 +72,6 @@ export default function Example() {
       'city': '',
       'country': '',
       'region': '',
-      'delivery-method': selectedDeliveryMethod,
       'payment-type': '',
       'postal-code': '',
       'phone': '',
@@ -93,6 +92,16 @@ export default function Example() {
           city: values['city'],
           region: values['region'],
           country: values['country'],
+          deliveryMethod:selectedDeliveryMethod.title,
+          paymentType:values['payment-type'],
+          postalCode:values['postal-code'],
+          cardNumber:values['card-number'],
+          nameOnCard: values['name-on-card'],
+          expirationDate: values['expiration-date'],
+          cvc: values['cvc'],
+          cart: [
+            ...AllcartItems
+          ]
       }).then((res) => console.log(res))
     },
     validationSchema: yup.object({}),
@@ -198,11 +207,7 @@ export default function Example() {
                         <input
                           type="text"
                           value={formik.values['company']}
-
-
-
                           onChange={formik.handleChange}
-
                           name="company"
                           id="company"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -221,11 +226,7 @@ export default function Example() {
                         <input
                           type="text"
                           value={formik.values['address']}
-
-
-
                           onChange={formik.handleChange}
-
                           name="address"
                           id="address"
                           autoComplete="street-address"
@@ -245,11 +246,7 @@ export default function Example() {
                         <input
                           type="text"
                           value={formik.values['apartment']}
-
-
-
                           onChange={formik.handleChange}
-
                           name="apartment"
                           id="apartment"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -340,11 +337,7 @@ export default function Example() {
                           type="text"
                           name="postal-code"
                           value={formik.values['postal-code']}
-
-
-
                           onChange={formik.handleChange}
-
                           id="postal-code"
                           autoComplete="postal-code"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"

@@ -3,6 +3,7 @@ import Layout from 'components/layout'
 import { products, setProducts } from 'store/slices/productsSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
+import Link from 'next/link'
 
 const collections = [
   {
@@ -77,6 +78,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     fetch("http://localhost:3000/api/products").then(res => res.json()).then(json => dispatch(setProducts(json)))
   }, [])
+  console.log("workin index")
   return (
     <div className="">
       <Layout>
@@ -209,10 +211,9 @@ const Home: NextPage = () => {
                       />
                     </div>
                     <h3 className="mt-4 text-sm text-gray-700">
-                      <a href={product.href}>
-                        <span className="absolute inset-0" />
+                      <Link href={product.href}>
                         {product.name}
-                      </a>
+                      </Link>
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">
                       {product.color}

@@ -1,7 +1,7 @@
 import { bindActionCreators, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import { AppStateType, CartItem } from 'types'
+import { AppStateType, CartItem, Product } from 'types'
 
 interface CartSlice {
     items: AppStateType["cart"] | [],
@@ -9,34 +9,7 @@ interface CartSlice {
 }
 
 const initialState: CartSlice = {
-    items: [{
-        id: 1,
-        name: 'Throwback Hip Bag',
-        href: '#',
-        color: 'Salmon',
-        price: '$90.00',
-        quantity: 1,
-        size: "default",
-        availableQty: 4,
-        imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg',
-        imageAlt:
-            'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
-    },
-    {
-        id: 2,
-        name: 'Medium Stuff Satchel',
-        href: '#',
-        color: 'Blue',
-        price: '$32.00',
-        quantity: 1,
-        size: "default",
-        availableQty: 4,
-        imageSrc:
-            'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg',
-        imageAlt:
-            'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-    }],
+    items: [],
     total: 0
 }
 
@@ -44,6 +17,9 @@ export const CartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
+        addProduct: (state, action: PayloadAction<CartItem>) => {
+            state.items = [...state.items, action.payload]
+        },
         removeProduct: (state, action: PayloadAction<number>) => {
             state.items = state.items.filter(item => item.id !== action.payload);
         },
@@ -70,7 +46,7 @@ export const CartSlice = createSlice({
     },
 })
 
-export const { addToTotal, changeQuantity, removeProduct } = CartSlice.actions
+export const { addToTotal, changeQuantity, addProduct, removeProduct } = CartSlice.actions
 
 export const cartItems = (state: RootState) => state.cart.items
 export const cartTotal = (state: RootState) => state.cart.total
