@@ -1,9 +1,11 @@
-import type { NextPage } from 'next'
+import type { GetStaticPaths, GetStaticProps, NextPage } from 'next'
 import Layout from 'components/layout'
 import { products, setProducts } from 'store/slices/productsSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import Link from 'next/link'
+import axios from 'axios'
+import { Collection, Product } from 'types'
 
 const collections = [
   {
@@ -28,18 +30,6 @@ const collections = [
     imageAlt:
       'Person sitting at a wooden desk with paper note organizer, pencil and tablet.',
   },
-]
-const trendingProducts = [
-  {
-    id: 1,
-    name: 'Leather Long Wallet',
-    color: 'Natural',
-    price: '$75',
-    href: '#',
-    imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/home-page-04-trending-product-02.jpg',
-    imageAlt: 'Hand stitched, orange leather long wallet.',
-  }
 ]
 const perks = [
   {
@@ -72,13 +62,12 @@ const perks = [
   },
 ]
 
-const Home: NextPage = () => {
-  const Allproducts = useSelector(products);
-  const dispatch = useDispatch()
-  useEffect(() => {
-    fetch("http://localhost:3000/api/products").then(res => res.json()).then(json => dispatch(setProducts(json)))
-  }, [])
-  console.log("workin index")
+const Home = ({prods, collecs}: {prods: Product[], collecs: Collection[]}) => {
+  const Allproducts = prods;
+  // const dispatch = useDispatch()
+  // useEffect(() => {
+  //   fetch("http://localhost:3000/api/products").then(res => res.json()).then(json => dispatch(setProducts(json)))
+  // }, [])
   return (
     <div className="">
       <Layout>
@@ -144,7 +133,7 @@ const Home: NextPage = () => {
                 Collections
               </h2>
               <div className="mx-auto grid max-w-md grid-cols-1 gap-y-6 px-4 sm:max-w-7xl sm:grid-cols-3 sm:gap-y-0 sm:gap-x-6 sm:px-6 lg:gap-x-8 lg:px-8">
-                {collections.map((collection) => (
+                {collecs.map((collection) => (
                   <div
                     key={collection.name}
                     className="group relative h-96 rounded-lg bg-white shadow-xl sm:aspect-w-4 sm:aspect-h-5 sm:h-auto"
@@ -215,9 +204,6 @@ const Home: NextPage = () => {
                         {product.name}
                       </Link>
                     </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      {product.color}
-                    </p>
                     <p className="mt-1 text-sm font-medium text-gray-900">
                       {product.price}
                     </p>
@@ -280,3 +266,13 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+export const getStaticProps: GetStaticProps = async ({params}) => {
+  const res = await axios.get(`http://localhost:3000/api/products`)
+  const res2 = await axios.get(`http://localhost:3000/api/collections`)
+  const prods: Product[] = res.data;
+  const collecs: Collection[] = res2.data;
+  return {
+    props: {prods, collecs}
+  }
+}

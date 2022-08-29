@@ -5,119 +5,33 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { product, products, setProduct } from 'store/slices/productsSlice'
+import productsSlice, { product, products, setProduct } from 'store/slices/productsSlice'
 import { addProduct, addToTotal, cartItems } from 'store/slices/cartSlice'
+import { RadioGroup } from '@headlessui/react'
+import { GetStaticPaths, GetStaticProps } from 'next'
+import { Product } from 'types'
 
-// let product = {
-//   name: 'Basic Tee 6-Pack',
-//   price: '$192',
-//   href: '#',
-//   images: [
-//     {
-//       src: 'https://tailwindui.com/img/ecommerce-images/product-page-02-secondary-product-shot.jpg',
-//       alt: 'Two each of gray, white, and black shirts laying flat.',
-//     },
-//     {
-//       src: 'https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-01.jpg',
-//       alt: 'Model wearing plain black basic tee.',
-//     },
-//     {
-//       src: 'https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-02.jpg',
-//       alt: 'Model wearing plain gray basic tee.',
-//     },
-//     {
-//       src: 'https://tailwindui.com/img/ecommerce-images/product-page-02-featured-product-shot.jpg',
-//       alt: 'Model wearing plain white basic tee.',
-//     },
-//   ],
-//   colors: [
-//     { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
-//     { name: 'Gray', class: 'bg-gray-200', selectedClass: 'ring-gray-400' },
-//     { name: 'Black', class: 'bg-gray-900', selectedClass: 'ring-gray-900' },
-//   ],
-//   sizes: [
-//     { name: 'XXS', inStock: false },
-//     { name: 'XS', inStock: true },
-//     { name: 'S', inStock: true },
-//     { name: 'M', inStock: true },
-//     { name: 'L', inStock: true },
-//     { name: 'XL', inStock: true },
-//     { name: '2XL', inStock: true },
-//     { name: '3XL', inStock: true },
-//   ],
-//   description:
-//     'The Basic Tee 6-Pack allows you to fully express your vibrant personality with three grayscale options. Feeling adventurous? Put on a heather gray tee. Want to be a trendsetter? Try our exclusive colorway: "Black". Need to add an extra pop of color to your outfit? Our white tee has you covered.',
-//   highlights: [
-//     'Hand cut and sewn locally',
-//     'Dyed with our proprietary colors',
-//     'Pre-washed & pre-shrunk',
-//     'Ultra-soft 100% cotton',
-//   ],
-//   details:
-//     'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
-// }
-// const reviews = {
-//   href: '#',
-//   average: 4,
-//   featured: [
-//     {
-//       id: 1,
-//       title: 'This is the best white t-shirt out there',
-//       rating: 5,
-//       content: `
-//         <p>I've searched my entire life for a t-shirt that reflects every color in the visible spectrum. Scientists said it couldn't be done, but when I look at this shirt, I see white light bouncing right back into my eyes. Incredible!</p>
-//       `,
-//       author: 'Mark Edwards',
-//       avatarSrc:
-//         'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixqx=oilqXxSqey&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//     },
-//     {
-//       id: 2,
-//       title: 'Adds the perfect variety to my wardrobe',
-//       rating: 4,
-//       content: `
-//         <p>I used to be one of those unbearable minimalists who only wore the same black v-necks every day. Now, I have expanded my wardrobe with three new crewneck options! Leaving off one star only because I wish the heather gray was more gray.</p>
-//       `,
-//       author: 'Blake Reid',
-//       avatarSrc:
-//         'https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.5&w=256&h=256&q=80',
-//     },
-//     {
-//       id: 3,
-//       title: 'All good things come in 6-Packs',
-//       rating: 5,
-//       content: `
-//         <p>Tasty beverages, strong abs that will never be seen due to aforementioned tasty beverages, and these Basic Tees!</p>
-//       `,
-//       author: 'Ben Russel',
-//       avatarSrc:
-//         'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//     },
-//   ],
-// }
-
-export default function ProductPage() {
-  const findProduct = useSelector(product)!
-  const [open, setOpen] = useState(false)
-  const [selectedColor, setSelectedColor] = useState(findProduct?.colors)
-  const [selectedSize, setSelectedSize] = useState(findProduct?.sizes)
-  const router = useRouter()
+export default function ProductPage({prod}: {prod: Product}) {
+  const findProduct = prod
+  const [selectedColor, setSelectedColor] = useState(findProduct?.colors[0])
+  const [selectedSize, setSelectedSize] = useState(findProduct?.sizes[0])
   const dispatch = useDispatch()
   const cart = useSelector(cartItems);
-  const productId = router.query.product
-  
-  useEffect(() => {
-    if(router.isReady) {
-        axios.get(`http://localhost:3000/api/product/${productId}`).then((res) => {
-        console.log(res.data);  
-        dispatch(setProduct(res.data))
-      })
-    }
-    return () => {
-      dispatch(setProduct(undefined))
-    }
+  // const router = useRouter()
+  // const productId = router.query.product
+  // useEffect(() => {
+  //   if(router.isReady && !findProduct) {
+  //       axios.get(`http://localhost:3000/api/product/${productId}`).then((res) => {
+  //       dispatch(setProduct(res.data))
+  //       setSelectedColor(res.data.colors[0])
+  //       setSelectedSize(res.data.sizes[0])
+  //     })
+  //   }
+  //   return () => {
+  //     dispatch(setProduct(undefined))
+  //   }
 
-  }, [router.isReady])
+  // }, [router.isReady])
   return (
     <Layout>
       <main className="pt-10 sm:pt-8 md:pt-0">
@@ -167,7 +81,101 @@ export default function ProductPage() {
           <div className="mt-4 lg:row-span-3 lg:mt-0">
             <h2 className="sr-only">Product information</h2>
             <p className="text-3xl text-gray-900">{findProduct?.price}</p>
+            
+            {/* Colors */}
+            <form className="mt-10">
+            <div>
+                <h3 className="text-sm text-gray-900 font-medium">Color</h3>
+                <RadioGroup value={selectedColor} onChange={setSelectedColor} className="mt-4">
+                  <RadioGroup.Label className="sr-only">Choose a color</RadioGroup.Label>
+                  <div className="flex items-center space-x-3">
+                    {findProduct?.colors.map((color) => (
+                      <RadioGroup.Option
+                        key={color.name}
+                        value={color}
+                        className={({ active, checked }) =>
+                          classNames(
+                            color.selectedClass,
+                            active && checked ? 'ring ring-offset-1' : '',
+                            !active && checked ? 'ring-2' : '',
+                            '-m-0.5 relative p-0.5 rounded-full flex items-center justify-center cursor-pointer focus:outline-none'
+                          )
+                        }
+                      >
+                        <RadioGroup.Label as="span" className="sr-only">
+                          {color.name}
+                        </RadioGroup.Label>
+                        <span
+                          aria-hidden="true"
+                          className={classNames(
+                            color.class,
+                            'h-8 w-8 border border-black border-opacity-10 rounded-full'
+                          )}
+                        />
+                      </RadioGroup.Option>
+                    ))}
+                  </div>
+                </RadioGroup>
+              </div>
+              </form>
+              {/* Sizes */}
+              <div className="mt-10">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm text-gray-900 font-medium">Size</h3>
+                </div>
 
+                <RadioGroup value={selectedSize} onChange={setSelectedSize} className="mt-4">
+                  <RadioGroup.Label className="sr-only">Choose a size</RadioGroup.Label>
+                  <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4">
+                    {findProduct?.sizes.map((size) => (
+                      <RadioGroup.Option
+                        key={size.name}
+                        value={size}
+                        disabled={!size.inStock}
+                        className={({ active }) =>
+                          classNames(
+                            size.inStock
+                              ? 'bg-white shadow-sm text-gray-900 cursor-pointer'
+                              : 'bg-gray-50 text-gray-200 cursor-not-allowed',
+                            active ? 'ring-2 ring-indigo-500' : '',
+                            'group relative border rounded-md py-3 px-4 flex items-center justify-center text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6'
+                          )
+                        }
+                      >
+                        {({ active, checked }) => (
+                          <>
+                            <RadioGroup.Label as="span">{size.name}</RadioGroup.Label>
+                            {size.inStock ? (
+                              <span
+                                className={classNames(
+                                  active ? 'border' : 'border-2',
+                                  checked ? 'border-indigo-500' : 'border-transparent',
+                                  'absolute -inset-px rounded-md pointer-events-none'
+                                )}
+                                aria-hidden="true"
+                              />
+                            ) : (
+                              <span
+                                aria-hidden="true"
+                                className="absolute -inset-px rounded-md border-2 border-gray-200 pointer-events-none"
+                              >
+                                <svg
+                                  className="absolute inset-0 w-full h-full text-gray-200 stroke-2"
+                                  viewBox="0 0 100 100"
+                                  preserveAspectRatio="none"
+                                  stroke="currentColor"
+                                >
+                                  <line x1={0} y1={100} x2={100} y2={0} vectorEffect="non-scaling-stroke" />
+                                </svg>
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </RadioGroup.Option>
+                    ))}
+                  </div>
+                </RadioGroup>
+              </div>
             {/* Reviews */}
             {/* <div className="mt-6">
               <h3 className="sr-only">Reviews</h3>
@@ -197,8 +205,22 @@ export default function ProductPage() {
                 type="submit"
                 className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 onClick={() => {
-                  dispatch(addProduct({...findProduct, quantity: 1, size: "default", availableQty: Number(findProduct.availableQty)}))
-                  dispatch(addToTotal(Number(findProduct.price.replace(/[^0-9.]/g, ""))))
+                  let found = false;
+                  cart.map(item => {
+                    if(item.id === findProduct.id && item.color === selectedColor.name && item.size === selectedSize.name) {
+                      found = true;
+                      if (item.quantity < findProduct.availableQty) {
+                        dispatch(addProduct({...findProduct, quantity: 1, color: selectedColor?.name, size: selectedSize?.name, availableQty: Number(findProduct.availableQty)}))
+                        dispatch(addToTotal(Number(findProduct.price.replace(/[^0-9.]/g, ""))))
+                      } else {
+                        alert(`Available Quantity is ${findProduct.availableQty}`)
+                      }
+                    }
+                  })
+                  if(!found) {
+                    dispatch(addProduct({...findProduct, quantity: 1, color: selectedColor?.name, size: selectedSize?.name, availableQty: Number(findProduct.availableQty)}))
+                    dispatch(addToTotal(Number(findProduct.price.replace(/[^0-9.]/g, ""))))
+                  }
                 }}
               >
                 Add to bag
@@ -305,4 +327,23 @@ export default function ProductPage() {
       
     </Layout>
   )
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const res = await axios.get("http://localhost:3000/api/products")
+  const products: Product[] = res.data;
+  return {
+    paths: products.map(prod => {
+      return {params: {product: prod.id}}
+    }),
+    fallback: true
+  }
+}
+
+export const getStaticProps: GetStaticProps = async ({params}) => {
+  const res = await axios.get(`http://localhost:3000/api/product/${params?.product}`)
+  const prod: Product = res.data;
+  return {
+    props: {prod}
+  }
 }

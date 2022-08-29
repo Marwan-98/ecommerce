@@ -18,15 +18,32 @@ export const CartSlice = createSlice({
     initialState,
     reducers: {
         addProduct: (state, action: PayloadAction<CartItem>) => {
-            state.items = [...state.items, action.payload]
+            let found = false;
+            state.items = state.items.map(item => {
+                if(item.id === action.payload.id && item.color === action.payload.color && item.size === action.payload.size) {
+                    found = true;
+                    return {...item, quantity: item.quantity + 1 }
+                } else {
+                    return item
+                }
+            })
+            if(!found) {
+                state.items = [...state.items, action.payload]
+            }
         },
-        removeProduct: (state, action: PayloadAction<number>) => {
-            state.items = state.items.filter(item => item.id !== action.payload);
+        removeProduct: (state, action: PayloadAction<CartItem>) => {
+            state.items = state.items.filter(item => {
+                if (item.id === action.payload.id && item.color === action.payload.color && item.size === action.payload.size) {
+                    return false
+                } else {
+                    return true
+                }
+            });
         },
-        changeQuantity: (state, action: PayloadAction<{ id: number, quantity: number }>) => {
+        changeQuantity: (state, action: PayloadAction<{ id: string,color: string, size: string, quantity: number }>) => {
             let accumulated = 0;
             state.items = state.items.map(item => {
-                if (item.id === action.payload.id) {
+                if (item.id === action.payload.id && item.color === action.payload.color && item.size === action.payload.size) {
                     accumulated += +item.price.replace(/[^0-9.]/g, "") * action.payload.quantity
                     return {
                         ...item,
@@ -39,6 +56,7 @@ export const CartSlice = createSlice({
             })
             // state.items.map((item) => accumulated += +item.price.replace(/[^0-9.]/g, "") * item.quantity)
             state.total = accumulated
+            console.log(state.items)
         },
         addToTotal: (state, action: PayloadAction<number>) => {
             state.total += action.payload

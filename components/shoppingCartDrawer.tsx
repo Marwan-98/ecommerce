@@ -103,7 +103,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: props) {
                             className="-my-6 divide-y divide-gray-200"
                           >
                             {AllcartItems.map((product) => (
-                              <li key={product.id} className="flex py-6">
+                              <li key={product.id + product.color + product.size} className="flex py-6">
                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                   <img
                                     src={product.imageSrc}
@@ -126,17 +126,21 @@ export default function ShoppingCartDrawer({ open, setOpen }: props) {
                                     <p className="mt-1 text-sm text-gray-500">
                                       {product.color}
                                     </p>
+                                    <p className="mt-1 text-sm text-gray-500">
+                                      {product.size}
+                                    </p>
                                   </div>
                                   <div className="flex flex-1 items-end justify-between text-sm">
                                     <p className="text-gray-500">
                                       <Dropdown
                                         onChange={(e) => {
-                                          dispatch(changeQuantity({id: product.id, quantity: +e}))
+                                          dispatch(changeQuantity({id: product.id, color: product.color, size: product.size, quantity: +e}))
                                         }}
                                         values={Array.from(
                                           Array(product.availableQty),
                                           (_, i) => i + 1
                                           )}
+                                          defaultValue={product.quantity}
                                       />
                                     </p>
 
@@ -145,7 +149,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: props) {
                                         type="button"
                                         className="font-medium text-indigo-600 hover:text-indigo-500"
                                         onClick={() => {
-                                          dispatch(removeProduct(product.id))
+                                          dispatch(removeProduct(product))
                                           dispatch(addToTotal(-Number(product.price.replace(/[^0-9.]/g, "")) * product.quantity))
                                         }}
                                       >
@@ -172,9 +176,10 @@ export default function ShoppingCartDrawer({ open, setOpen }: props) {
                       <div className="mt-6">
                         <Link
                           href="/checkout"
-                          className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                         >
+                          <a className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">
                           Checkout
+                          </a>
                         </Link>
                       </div>
                       <div className="mt-6 flex justify-center text-center text-sm text-gray-500">

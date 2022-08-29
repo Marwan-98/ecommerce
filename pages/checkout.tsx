@@ -9,34 +9,9 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToTotal, cartItems, cartTotal, changeQuantity, removeProduct } from 'store/slices/cartSlice'
 import axios from 'axios'
+import valid from "card-validator"
+import { loadStripe } from '@stripe/stripe-js'
 
-const products = [
-  {
-    id: 1,
-    title: 'Basic Tee',
-    href: '#',
-    price: '$32.00',
-    color: 'Black',
-    size: 'Large',
-    imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/checkout-page-02-product-01.jpg',
-    imageAlt: "Front of men's Basic Tee in black.",
-    availableQty: 10,
-  },
-  {
-    id: 2,
-    title: 'Emad Tee',
-    href: '#',
-    price: '$32.00',
-    color: 'Black',
-    size: 'Large',
-    imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/checkout-page-02-product-01.jpg',
-    imageAlt: "Front of men's Basic Tee in black.",
-    availableQty: 6,
-  },
-  // More products...
-]
 const deliveryMethods = [
   {
     id: 1,
@@ -70,9 +45,9 @@ export default function Example() {
       'address': '',
       'apartment': '',
       'city': '',
-      'country': '',
+      'country': 'United States',
       'region': '',
-      'payment-type': '',
+      'payment-type': 'Credit card',
       'postal-code': '',
       'phone': '',
       'card-number': '',
@@ -81,8 +56,8 @@ export default function Example() {
       'cvc': ''
     },
     onSubmit: (values) => {
-      axios.post("http://localhost:3000/api/hello", {
-        firstName: values['first-name'],
+      axios.post("http://localhost:3000/api/orders", {
+          firstName: values['first-name'],
           lastName: values['last-name'],
           email: values['email-address'],
           company: values['company'],
@@ -102,11 +77,38 @@ export default function Example() {
           cart: [
             ...AllcartItems
           ]
-      }).then((res) => console.log(res))
+      }).then(async (res) => {
+        const stripe = await loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx')
+        await stripe?.confirmCardPayment(res.data.paymentIntent, {
+          payment_method: {
+            card: {
+              token: res.data.token
+            },
+            billing_details: {
+              name: "John Doe"
+            }
+          }
+        }).then((res) => {
+          console.log(res)
+        })
+      })
     },
-    validationSchema: yup.object({}),
+    validationSchema:  yup.object({
+      'first-name': yup.string().matches(/^[A-Z]+$/i).required(),
+      'last-name': yup.string().matches(/^[a-zA-Z]+$/).required(),
+      'company': yup.string().required(),
+      'phone': yup.string().matches(/^[0-9]+$/).max(12).required(),
+      'address': yup.string().required(),
+      'apartment': yup.string().required(),
+      'city': yup.string().required(),
+      'region': yup.string().required(),
+      'postal-code': yup.string().test(value => valid.postalCode(value).isValid),
+      'card-number': yup.string().test(value => valid.number(value).isValid),
+      'name-on-card': yup.string().test(value => valid.cardholderName(value).isValid),
+      'expiration-date': yup.string().test(value => valid.expirationDate(value).isValid),
+      'cvc': yup.string().test(value => valid.cvv(value).isValid)
+    })
   });
-
   return (
     <Layout>
       <div className="bg-gray-50">
@@ -139,6 +141,7 @@ export default function Example() {
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                       />
                     </div>
+                    {formik.touched && formik.errors['email-address'] ? <span>{'check'}</span> : null}
                   </div>
                 </div>
 
@@ -159,19 +162,15 @@ export default function Example() {
                         <input
                           type="text"
                           value={formik.values['first-name']}
-
-
-
                           onChange={formik.handleChange}
-
                           id="first-name"
                           name="first-name"
                           autoComplete="given-name"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors['first-name'] ? <span>{'check'}</span> : null}
                     </div>
-
                     <div>
                       <label
                         htmlFor="last-name"
@@ -194,6 +193,7 @@ export default function Example() {
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors['last-name'] ? <span>{'check'}</span> : null}
                     </div>
 
                     <div className="sm:col-span-2">
@@ -213,6 +213,7 @@ export default function Example() {
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors.company ? <span>{'check'}</span> : null}
                     </div>
 
                     <div className="sm:col-span-2">
@@ -233,6 +234,8 @@ export default function Example() {
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors.address ? <span>{'check'}</span> : null}
+
                     </div>
 
                     <div className="sm:col-span-2">
@@ -252,6 +255,7 @@ export default function Example() {
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors.apartment ? <span>{'check'}</span> : null}
                     </div>
 
                     <div>
@@ -276,6 +280,7 @@ export default function Example() {
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors.city ? <span>{'check'}</span> : null}
                     </div>
 
                     <div>
@@ -323,6 +328,7 @@ export default function Example() {
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors.region ? <span>{'check'}</span> : null}
                     </div>
 
                     <div>
@@ -343,6 +349,7 @@ export default function Example() {
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors['postal-code'] ? <span>{'check'}</span> : null}
                     </div>
 
                     <div className="sm:col-span-2">
@@ -363,6 +370,7 @@ export default function Example() {
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors.phone ? <span>{'check'}</span> : null}
                     </div>
                   </div>
                 </div>
@@ -497,16 +505,13 @@ export default function Example() {
                           type="text"
                           id="card-number"
                           value={formik.values['card-number']}
-
-
-
                           onChange={formik.handleChange}
-
                           name="card-number"
                           autoComplete="cc-number"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors['card-number'] ? <span>{'check'}</span> : null}
                     </div>
 
                     <div className="col-span-4">
@@ -521,15 +526,13 @@ export default function Example() {
                           type="text"
                           id="name-on-card"
                           value={formik.values['name-on-card']}
-
-
                           onChange={formik.handleChange}
-
                           name="name-on-card"
                           autoComplete="cc-name"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors['name-on-card'] ? <span>{'check'}</span> : null}
                     </div>
 
                     <div className="col-span-3">
@@ -552,8 +555,8 @@ export default function Example() {
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors['expiration-date'] ? <span>{'check'}</span> : null}
                     </div>
-
                     <div>
                       <label
                         htmlFor="cvc"
@@ -566,13 +569,13 @@ export default function Example() {
                           type="text"
                           value={formik.values['cvc']}
                           onChange={formik.handleChange}
-
                           name="cvc"
                           id="cvc"
                           autoComplete="csc"
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                         />
                       </div>
+                    {formik.touched && formik.errors.cvc ? <span>{'check'}</span> : null}
                     </div>
                   </div>
                 </div>
@@ -626,7 +629,7 @@ export default function Example() {
                                   className="h-5 w-5"
                                   aria-hidden="true"
                                   onClick={() => {
-                                    dispatch(removeProduct(product.id))
+                                    dispatch(removeProduct(product))
                                     dispatch(addToTotal(-Number(product.price.replace(/[^0-9.]/g, "")) * product.quantity))
                                   }}
                                 />
@@ -662,7 +665,7 @@ export default function Example() {
                     <div className="flex items-center justify-between">
                       <dt className="text-sm">Subtotal</dt>
                       <dd className="text-sm font-medium text-gray-900">
-                        $64.00
+                        ${total}
                       </dd>
                     </div>
                     <div className="flex items-center justify-between">
@@ -680,7 +683,7 @@ export default function Example() {
                     <div className="flex items-center justify-between border-t border-gray-200 pt-6">
                       <dt className="text-base font-medium">Total</dt>
                       <dd className="text-base font-medium text-gray-900">
-                        ${total}
+                        ${(total + 5 + 5.52).toFixed(2)}
                       </dd>
                     </div>
                   </dl>

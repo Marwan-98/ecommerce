@@ -1,23 +1,24 @@
 export interface Product {
-  id: number
+  id: string
   name: string
   href: string
-  color: string
   price: string
   availableQty: number
   images: Image[]
-  colors: []
-  sizes: []
+  colors: Color[]
+  sizes: Size[] 
   imageSrc: string
   imageAlt: string
   description: string
   highlights: string[]
   details: string
+  collectionId: string
 }
 
 export interface CartItem extends Product {
   quantity: number,
-  size: string
+  size: string,
+  color: string
 }
 
 export type Image = {
@@ -27,20 +28,54 @@ export type Image = {
 }
 
 export type Color = {
+  id: string,
   name: string,
   class: string,
   selectedClass: string
 }
 
+export type ItemColors = {
+  id: string,
+  productId: string,
+  colorId: string
+}
+
 export type Size = {
+  id: string,
   name: string,
   inStock: boolean
+}
+
+export type ItemSize = {
+  id: string,
+  productId: string,
+  sizeId: string,
+}
+
+export type HighLight = {
+  id: string,
+  highLight: string
+}
+
+export type ItemHighlights = {
+  id: string,
+  productId: string,
+  highlightId: string
+}
+
+export type Collection = {
+  id: string,
+  name: string
+  href: string,
+  imageSrc: string,
+  imageAlt: string
 }
 
 export type Category = {
   name: string
   featured: Product[]
 }
+
 export type AppStateType = {
   products: Product[]
   categories: Category[]
@@ -51,6 +86,7 @@ export type Page = {
     name: string;
     href: string;
 }
+
 export type Navigation = {
   categories: Category[]
 }
