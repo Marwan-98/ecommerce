@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addToTotal, cartItems, cartTotal, changeQuantity, removeProduct } from 'store/slices/cartSlice'
 import { products, setProducts } from 'store/slices/productsSlice'
 import { CartItem, Product } from 'types'
+import { toNumber } from 'utils/toNumber'
 import Dropdown from './dropdown'
 
 // const cart: CartItem[] = [
@@ -150,7 +151,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: props) {
                                         className="font-medium text-indigo-600 hover:text-indigo-500"
                                         onClick={() => {
                                           dispatch(removeProduct(product))
-                                          dispatch(addToTotal(-Number(product.price.replace(/[^0-9.]/g, "")) * product.quantity))
+                                          dispatch(addToTotal(-toNumber(product.price) * product.quantity))
                                         }}
                                       >
                                         Remove

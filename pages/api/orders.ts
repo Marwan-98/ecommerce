@@ -7,6 +7,7 @@ import { CartItem } from 'types';
 import nodemailer from 'nodemailer'
 import * as MailTemp from 'utils/mailTemp';
 import {render} from 'mjml-react';
+import { toNumber } from 'utils/toNumber';
 const stripe = require('stripe')(String(process.env.STRIPE_SECERT_KEY))
 
 const doc = new GoogleSpreadsheet('1GSLrLTt1dya45r9NYXUQeEUPp_Q_Fn1x-gGgrH3UzTI');
@@ -59,7 +60,7 @@ export default async function handler(
       const newOrder = await OrderSheet.addRow({ firstName, lastName, email, company, phone, address, apartment, city, region, country, deliveryMethod, paymentType, postalCode, cardNumber, nameOnCard, expirationDate, cvc })
       let prices = 1;
       cart.map(async (item: CartItem) => {
-        prices += +item.price.replace(/[^0-9.]/g, "") * item.quantity
+        prices += +toNumber(item.price) * item.quantity
         await OrderItemSheet.addRow({ orderId: newOrder.id, productId: item.id, quantity: item.quantity, size: item.size, color: item.color })
       })
       const paymentIntent = await stripe.paymentIntents.create({

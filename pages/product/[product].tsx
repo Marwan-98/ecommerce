@@ -10,6 +10,7 @@ import { addProduct, addToTotal, cartItems } from 'store/slices/cartSlice'
 import { RadioGroup } from '@headlessui/react'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { Product } from 'types'
+import { toNumber } from 'utils/toNumber'
 
 export default function ProductPage({prod}: {prod: Product}) {
   const findProduct = prod
@@ -176,31 +177,6 @@ export default function ProductPage({prod}: {prod: Product}) {
                   </div>
                 </RadioGroup>
               </div>
-            {/* Reviews */}
-            {/* <div className="mt-6">
-              <h3 className="sr-only">Reviews</h3>
-              <div className="flex items-center">
-                <div className="flex items-center">
-                  {[0, 1, 2, 3, 4].map((rating) => (
-                    <StarIcon
-                      key={rating}
-                      className={classNames(
-                        reviews.average > rating
-                          ? 'text-gray-900'
-                          : 'text-gray-200',
-                        'h-5 w-5 flex-shrink-0'
-                      )}
-                      aria-hidden="true"
-                    />
-                  ))}
-                </div>
-                <p className="sr-only">{reviews.average} out of 5 stars</p>
-              </div>
-            </div> */}
-
-            
-              
-
               <button
                 type="submit"
                 className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -211,7 +187,7 @@ export default function ProductPage({prod}: {prod: Product}) {
                       found = true;
                       if (item.quantity < findProduct.availableQty) {
                         dispatch(addProduct({...findProduct, quantity: 1, color: selectedColor?.name, size: selectedSize?.name, availableQty: Number(findProduct.availableQty)}))
-                        dispatch(addToTotal(Number(findProduct.price.replace(/[^0-9.]/g, ""))))
+                        dispatch(addToTotal(+toNumber(findProduct.price)))
                       } else {
                         alert(`Available Quantity is ${findProduct.availableQty}`)
                       }
@@ -219,7 +195,7 @@ export default function ProductPage({prod}: {prod: Product}) {
                   })
                   if(!found) {
                     dispatch(addProduct({...findProduct, quantity: 1, color: selectedColor?.name, size: selectedSize?.name, availableQty: Number(findProduct.availableQty)}))
-                    dispatch(addToTotal(Number(findProduct.price.replace(/[^0-9.]/g, ""))))
+                    dispatch(addToTotal(+toNumber(findProduct.price)))
                   }
                 }}
               >
@@ -263,64 +239,6 @@ export default function ProductPage({prod}: {prod: Product}) {
                 <p className="text-sm text-gray-600">{findProduct?.details}</p>
               </div>
             </section>
-          </div>
-
-          <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
-            {/* Reviews */}
-            {/* <section
-              aria-labelledby="reviews-heading"
-              className="border-t border-gray-200 pt-10 lg:pt-16"
-            >
-              <h2 id="reviews-heading" className="sr-only">
-                Reviews
-              </h2>
-
-              <div className="space-y-10">
-                {reviews.featured.map((review) => (
-                  <div key={review.id} className="flex flex-col sm:flex-row">
-                    <div className="order-2 mt-6 sm:mt-0 sm:ml-16">
-                      <h3 className="text-sm font-medium text-gray-900">
-                        {review.title}
-                      </h3>
-                      <p className="sr-only">{review.rating} out of 5 stars</p>
-
-                      <div
-                        className="mt-3 space-y-6 text-sm text-gray-600"
-                        dangerouslySetInnerHTML={{ __html: review.content }}
-                      />
-                    </div>
-
-                    <div className="order-1 flex items-center sm:flex-col sm:items-start">
-                      <img
-                        src={review.avatarSrc}
-                        alt={`${review.author}.`}
-                        className="h-12 w-12 rounded-full"
-                      />
-
-                      <div className="ml-4 sm:ml-0 sm:mt-4">
-                        <p className="text-sm font-medium text-gray-900">
-                          {review.author}
-                        </p>
-                        <div className="mt-2 flex items-center">
-                          {[0, 1, 2, 3, 4].map((rating) => (
-                            <StarIcon
-                              key={rating}
-                              className={classNames(
-                                review.rating > rating
-                                  ? 'text-gray-900'
-                                  : 'text-gray-200',
-                                'h-5 w-5 flex-shrink-0'
-                              )}
-                              aria-hidden="true"
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section> */}
           </div>
         </div>
       </main>

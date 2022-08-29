@@ -21,6 +21,25 @@ export interface CartItem extends Product {
   color: string
 }
 
+export interface formValues {
+  'email-address': string,
+  'first-name': string,
+  'last-name': string,
+  'company': string,
+  'address': string,
+  'apartment': string,
+  'city': string,
+  'country': string,
+  'region': string,
+  'payment-type': string,
+  'postal-code': string,
+  'phone': string,
+  'card-number': string,
+  'name-on-card': string,
+  'expiration-date': string,
+  'cvc': string
+}
+
 export type Image = {
   productId?: string,
   src: string,

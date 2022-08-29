@@ -2,6 +2,7 @@ import { bindActionCreators, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
 import { AppStateType, CartItem, Product } from 'types'
+import { toNumber } from 'utils/toNumber'
 
 interface CartSlice {
     items: AppStateType["cart"] | [],
@@ -44,17 +45,16 @@ export const CartSlice = createSlice({
             let accumulated = 0;
             state.items = state.items.map(item => {
                 if (item.id === action.payload.id && item.color === action.payload.color && item.size === action.payload.size) {
-                    accumulated += +item.price.replace(/[^0-9.]/g, "") * action.payload.quantity
+                    accumulated += +toNumber(item.price) * action.payload.quantity
                     return {
                         ...item,
                         quantity: action.payload.quantity
                     }
                 } else {
-                    accumulated += +item.price.replace(/[^0-9.]/g, "") * item.quantity
+                    accumulated += +toNumber(item.price) * item.quantity
                     return item
                 }
             })
-            // state.items.map((item) => accumulated += +item.price.replace(/[^0-9.]/g, "") * item.quantity)
             state.total = accumulated
             console.log(state.items)
         },
