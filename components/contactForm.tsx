@@ -2,8 +2,8 @@ import { RadioGroup } from "@headlessui/react"
 import { CheckCircleIcon } from "@heroicons/react/outline"
 import { FormikProps } from "formik"
 import { classNames } from "lib"
-import { useState } from "react"
-import { formValues } from "types"
+import { Dispatch, SetStateAction, useState } from "react"
+import { DeliveryMethod, formValues } from "types"
 
 const paymentMethods = [
     { id: 'credit-card', title: 'Credit card' },
@@ -11,21 +11,7 @@ const paymentMethods = [
     { id: 'etransfer', title: 'eTransfer' },
 ]
 
-
-const deliveryMethods = [
-    {
-        id: 1,
-        title: 'Standard',
-        turnaround: '4–10 business days',
-        price: '$5.00',
-    },
-    { id: 2, title: 'Express', turnaround: '2–5 business days', price: '$16.00' },
-]
-
-const ContactForm = ({ formik }: { formik: FormikProps<formValues> }) => {
-    const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(
-        deliveryMethods[0]
-    )
+const ContactForm = ({ formik, selectedDeliveryMethod, setSelectedDeliveryMethod, deliveryMethods }: { formik: FormikProps<formValues>, selectedDeliveryMethod: Object, setSelectedDeliveryMethod: Dispatch<SetStateAction<DeliveryMethod>>, deliveryMethods: DeliveryMethod[] }) => {
     return (
         <div>
             <div>

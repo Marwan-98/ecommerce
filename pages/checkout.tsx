@@ -15,7 +15,18 @@ import { toNumber } from 'utils/toNumber'
 import ContactForm from 'components/contactForm'
 import OrderSummary from 'components/orderSummary'
 
-export default function Example() {
+const deliveryMethods = [
+  {
+      id: 1,
+      title: 'Standard',
+      turnaround: '4–10 business days',
+      price: '$5.00',
+  },
+  { id: 2, title: 'Express', turnaround: '2–5 business days', price: '$16.00' },
+]
+
+export default function Checkout() {
+  const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(deliveryMethods[0])
   const [open, setOpen] = useState(false)
 
   const total = useSelector(cartTotal);
@@ -52,7 +63,7 @@ export default function Example() {
           city: values['city'],
           region: values['region'],
           country: values['country'],
-          deliveryMethod: "default",
+          deliveryMethod: selectedDeliveryMethod.title,
           paymentType:values['payment-type'],
           postalCode:values['postal-code'],
           cardNumber:values['card-number'],
@@ -63,15 +74,12 @@ export default function Example() {
             ...AllcartItems
           ]
       }).then(async (res) => {
-        const stripe = await loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx')
+        const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!)
         await stripe?.confirmCardPayment(res.data.paymentIntent, {
           payment_method: {
             card: {
               token: res.data.token
             },
-            billing_details: {
-              name: "John Doe"
-            }
           }
         }).then((res) => {
           console.log(res)
@@ -102,7 +110,7 @@ export default function Example() {
             <h1 className="sr-only">Checkout</h1>
 
             <form className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16" onSubmit={formik.handleSubmit}>
-              <ContactForm formik={formik}/>
+              <ContactForm formik={formik} deliveryMethods={deliveryMethods} selectedDeliveryMethod={selectedDeliveryMethod} setSelectedDeliveryMethod={setSelectedDeliveryMethod}/>
 
               {/* Order summary */}
               <OrderSummary />

@@ -116,7 +116,6 @@ const products = [
 export const getStaticProps: GetStaticProps = async ({params}) => {
   const res = await axios.get(`http://localhost:3000/api/collection/${params?.collection}`)
   const prods: Product[] = res.data;
-  console.log(params);
   return {
     props: {prods}
   }

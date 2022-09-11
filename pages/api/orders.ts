@@ -55,7 +55,6 @@ export default async function handler(
       await doc.useServiceAccountAuth(credentials);
       await doc.loadInfo()
       const OrderSheet = doc.sheetsByTitle['Order']
-      const ProductSheet = doc.sheetsByTitle['Products']
       const OrderItemSheet = doc.sheetsByTitle['OrderItem']
       const newOrder = await OrderSheet.addRow({ firstName, lastName, email, company, phone, address, apartment, city, region, country, deliveryMethod, paymentType, postalCode, cardNumber, nameOnCard, expirationDate, cvc })
       let prices = 1;
@@ -64,7 +63,7 @@ export default async function handler(
         await OrderItemSheet.addRow({ orderId: newOrder.id, productId: item.id, quantity: item.quantity, size: item.size, color: item.color })
       })
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: (prices + 5.00 + 5.52) * 100,
+        amount: Math.round((prices + 5.00 + 5.52) * 100),
         currency: 'usd',
         payment_method_types: ['card']
       });
@@ -83,11 +82,11 @@ export default async function handler(
         text: '',
         html: render(MailTemp.generate(), {validationLevel: "soft"}).html
       };
-      await transporter.sendMail(mailOption, (err, data) => {
-        if (err) {
-          console.log(err);
-        }
-      });
+      // await transporter.sendMail(mailOption, (err, data) => {
+      //   if (err) {
+      //     console.log(err);
+      //   }
+      // });
       return res.json({paymentIntent: paymentIntent['client_secret'], token: token.id});
     default:
       break;

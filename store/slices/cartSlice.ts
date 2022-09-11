@@ -56,7 +56,6 @@ export const CartSlice = createSlice({
                 }
             })
             state.total = accumulated
-            console.log(state.items)
         },
         addToTotal: (state, action: PayloadAction<number>) => {
             state.total += action.payload

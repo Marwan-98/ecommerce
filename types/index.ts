@@ -95,6 +95,13 @@ export type Category = {
   featured: Product[]
 }
 
+export type DeliveryMethod = {
+  id: number
+  title: string
+  turnaround: string
+  price: string
+}
+
 export type AppStateType = {
   products: Product[]
   categories: Category[]
