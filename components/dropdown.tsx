@@ -15,7 +15,11 @@ function Dropdown({ values, defaultValue, onChange }: props) {
       defaultValue={defaultValue}
     >
       {values.map((i, idx) => {
-        return <option value={i} key={values[idx]}>{i}</option>
+        return (
+          <option value={i} key={values[idx]}>
+            {i}
+          </option>
+        )
       })}
     </select>
   )

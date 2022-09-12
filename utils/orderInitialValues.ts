@@ -1,0 +1,18 @@
+export const orderInitialValues = {
+  'email-address': '',
+  'first-name': '',
+  'last-name': '',
+  company: '',
+  address: '',
+  apartment: '',
+  city: '',
+  country: 'United States',
+  region: '',
+  'payment-type': 'Credit card',
+  'postal-code': '',
+  phone: '',
+  'card-number': '',
+  'name-on-card': '',
+  'expiration-date': '',
+  cvc: '',
+}

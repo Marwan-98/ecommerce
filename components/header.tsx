@@ -2,16 +2,13 @@ import { ShoppingBagIcon } from '@heroicons/react/outline'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { cartItems } from 'store/slices/cartSlice'
-import Drawer from './drawer'
 import ShoppingCartDrawer from './shoppingCartDrawer'
 
 function Header() {
-  const [open, setOpen] = useState(false)
   const [openShoppingCart, setOpenShoppingCart] = useState(false)
-  const cart = useSelector(cartItems);
+  const cart = useSelector(cartItems)
   return (
     <>
-      <Drawer open={open} setOpen={setOpen} />
       <ShoppingCartDrawer
         open={openShoppingCart}
         setOpen={setOpenShoppingCart}
