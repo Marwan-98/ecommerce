@@ -1,8 +1,6 @@
-import { RadioGroup } from '@headlessui/react'
-import { classNames } from 'lib'
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { addProduct, addToTotal, cartItems } from 'store/slices/cartSlice'
+import { useDispatch } from 'react-redux'
+import { addProduct, addToTotal } from 'store/slices/cartSlice'
 import { Product } from 'types'
 import { toNumber } from 'utils/toNumber'
 import ProductColors from './productColors'
@@ -12,7 +10,6 @@ import ProductSizes from './productSizes'
 const ProductInfo = ({ findProduct }: { findProduct: Product }) => {
   const [selectedColor, setSelectedColor] = useState(findProduct?.colors[0])
   const [selectedSize, setSelectedSize] = useState(findProduct?.sizes[0])
-  const cart = useSelector(cartItems)
   const dispatch = useDispatch()
   return (
     <div className="mx-auto max-w-2xl px-4 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:py-16">

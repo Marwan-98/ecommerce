@@ -1,5 +1,5 @@
 import axios from 'axios'
-import Layout from 'components/layout'
+import Layout from 'components/Layout/layout'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { Collection, Product } from 'types'
 

@@ -23,7 +23,6 @@ export default function ShoppingCartDrawer({ open, setOpen }: props) {
   const total = useSelector(cartTotal)
   const AllcartItems = useSelector(cartItems)
   const dispatch = useDispatch()
-  console.log(AllcartItems)
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={setOpen}>

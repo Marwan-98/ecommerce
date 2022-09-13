@@ -1,9 +1,9 @@
-import Layout from 'components/layout'
+import Layout from 'components/Layout/layout'
 import axios from 'axios'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { Product } from 'types'
-import ProductImages from 'components/productImages'
-import ProductInfo from 'components/ProductInfo'
+import ProductImages from 'components/ProductInfo/productImages'
+import ProductInfo from 'components/ProductInfo/ProductInfo'
 
 export default function ProductPage({ prod }: { prod: Product }) {
   const findProduct = prod

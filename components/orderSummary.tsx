@@ -8,10 +8,9 @@ import {
   cartTotal,
 } from 'store/slices/cartSlice'
 import { toNumber } from 'utils/toNumber'
-import Dropdown from './dropdown'
+import Dropdown from './ShoppingCart/dropdown'
 
 const OrderSummary = ({ loading }: { loading: boolean }) => {
-  console.log(loading)
   const AllcartItems = useSelector(cartItems)
   const total = useSelector(cartTotal)
   const dispatch = useDispatch()

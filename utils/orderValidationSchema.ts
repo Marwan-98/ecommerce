@@ -10,6 +10,7 @@ export const orderValidationSchema = yup.object({
     .string()
     .matches(/^[a-zA-Z]+$/)
     .required(),
+  'email-address': yup.string().email().required(),
   company: yup.string().required(),
   phone: yup
     .string()

@@ -1,14 +1,12 @@
-import Layout from 'components/layout'
+import Layout from 'components/Layout/layout'
 import { useFormik } from 'formik'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { cartItems, cartTotal } from 'store/slices/cartSlice'
-import axios from 'axios'
-import ContactForm from 'components/contactForm'
+import ContactForm from 'components/ContactForm/contactForm'
 import OrderSummary from 'components/orderSummary'
 import { orderValidationSchema } from 'utils/orderValidationSchema'
 import { orderInitialValues } from 'utils/orderInitialValues'
-import { orderValues } from 'utils/orderValues'
 import AppNotification from 'components/notfication'
 import orderIntialization from 'utils/orderIntialization'
 import paymentConfirmation from 'utils/paymentConfirmation'
@@ -41,11 +39,10 @@ export default function Checkout() {
       orderIntialization(values, AllcartItems).then(async (res) => {
         paymentConfirmation(res).then((res) => {
           if (!res!.error) {
-            addOrder(values, selectedDeliveryMethod, AllcartItems).then(
-              (res) => {
-                setLoading(false)
-              }
-            )
+            addOrder(values, selectedDeliveryMethod, AllcartItems).then(() => {
+              setLoading(false)
+            })
+            formik.resetForm()
           } else {
             setVisible('visible')
             setLoading(false)
@@ -57,6 +54,8 @@ export default function Checkout() {
       })
     },
     validationSchema: orderValidationSchema,
+    validateOnChange: false,
+    validateOnBlur: false,
   })
   return (
     <Layout>
@@ -76,7 +75,6 @@ export default function Checkout() {
                 setSelectedDeliveryMethod={setSelectedDeliveryMethod}
               />
 
-              {/* Order summary */}
               <OrderSummary loading={loading} />
             </form>
           </div>
