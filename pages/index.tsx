@@ -31,8 +31,12 @@ const Home = ({
 export default Home
 
 export const getStaticProps: GetStaticProps = async () => {
-  const res = await axios.get(`http://localhost:3000/api/products`)
-  const res2 = await axios.get(`http://localhost:3000/api/collections`)
+  const res = await axios.get(
+    `https://ecommerce-jb6nt0gsg-marwan-98.vercel.app/api/products`
+  )
+  const res2 = await axios.get(
+    `https://ecommerce-jb6nt0gsg-marwan-98.vercel.app/api/collections`
+  )
   const prods: Product[] = res.data
   const collecs: Collection[] = res2.data
   return {
