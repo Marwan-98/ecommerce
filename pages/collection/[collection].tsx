@@ -2,6 +2,8 @@ import axios from 'axios'
 import Layout from 'components/Layout/layout'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { Collection, Product } from 'types'
+import { extractSheets } from 'spreadsheet-to-json'
+import { Buffer } from 'buffer/'
 
 export default function Example({ prods }: { prods: Product[] }) {
   return (
@@ -39,8 +41,29 @@ export default function Example({ prods }: { prods: Product[] }) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await axios.get('http://localhost:3000/api/collections')
-  const collections: Collection[] = res.data
+  const credentials = JSON.parse(
+    Buffer.from(process.env.GOOGLE_SERVICE_KEY!, 'base64').toString()
+  )
+
+  let res: Collection[] = []
+
+  await extractSheets(
+    {
+      spreadsheetKey: '1GSLrLTt1dya45r9NYXUQeEUPp_Q_Fn1x-gGgrH3UzTI',
+      credentials: credentials,
+      sheetsToExtract: ['Collections'],
+      // formatCell: formatCell
+    },
+    function (err: any, data: { Collections: Product[] }) {
+      if (err) {
+        return err
+      }
+      return (res = data.Collections)
+    }
+  )
+
+  const collections: Collection[] = res
+
   return {
     paths: collections.map((collec) => {
       return { params: { collection: collec.id } }
@@ -50,10 +73,27 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const res = await axios.get(
-    `http://localhost:3000/api/collection/${params?.collection}`
+  const credentials = JSON.parse(
+    Buffer.from(process.env.GOOGLE_SERVICE_KEY!, 'base64').toString()
   )
-  const prods: Product[] = res.data
+  let res: Product[] = []
+  await extractSheets(
+    {
+      spreadsheetKey: '1GSLrLTt1dya45r9NYXUQeEUPp_Q_Fn1x-gGgrH3UzTI',
+      credentials: credentials,
+      sheetsToExtract: ['Products'],
+    },
+    function (err: any, data: { Products: Product[] }) {
+      if (err) {
+        return err
+      }
+      const findProducts = data.Products.filter(
+        (product) => product.collectionId === params?.collection
+      )
+      res = findProducts
+    }
+  )
+  const prods: Product[] = res
   return {
     props: { prods },
   }

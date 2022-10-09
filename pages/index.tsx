@@ -5,6 +5,8 @@ import { Collection, Product } from 'types'
 import Hero from 'components/hero'
 import Trending from 'components/trending'
 import Perks from 'components/perks'
+import { extractSheets } from 'spreadsheet-to-json'
+import { Buffer } from 'buffer/'
 
 const Home = ({
   prods,
@@ -27,14 +29,44 @@ const Home = ({
     </div>
   )
 }
-
 export default Home
 
 export const getStaticProps: GetStaticProps = async () => {
-  const res = await axios.get(`http://localhost:3000/api/products`)
-  const res2 = await axios.get(`http://localhost:3000/api/collections`)
-  const prods: Product[] = res.data
-  const collecs: Collection[] = res2.data
+  const credentials = JSON.parse(
+    Buffer.from(process.env.GOOGLE_SERVICE_KEY!, 'base64').toString()
+  )
+  let res: Product[] = []
+  await extractSheets(
+    {
+      spreadsheetKey: '1GSLrLTt1dya45r9NYXUQeEUPp_Q_Fn1x-gGgrH3UzTI',
+      credentials: credentials,
+      sheetsToExtract: ['Products'],
+      // formatCell: formatCell
+    },
+    function (err: any, data: { Products: Product[] }) {
+      if (err) {
+        return err
+      }
+      return (res = data.Products)
+    }
+  )
+  let res2: Collection[] = []
+  await extractSheets(
+    {
+      spreadsheetKey: '1GSLrLTt1dya45r9NYXUQeEUPp_Q_Fn1x-gGgrH3UzTI',
+      credentials: credentials,
+      sheetsToExtract: ['Collections'],
+      // formatCell: formatCell
+    },
+    function (err: any, data: { Collections: Product[] }) {
+      if (err) {
+        return err
+      }
+      return (res2 = data.Collections)
+    }
+  )
+  const prods: Product[] = res
+  const collecs: Collection[] = res2
   return {
     props: { prods, collecs },
   }
