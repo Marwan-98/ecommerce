@@ -6,14 +6,11 @@ const addOrder = (
   selectedDeliveryMethod: any,
   AllcartItems: any
 ) => {
-  return axios.post(
-    'https://ecommerce-jb6nt0gsg-marwan-98.vercel.app/api/orderConfirm',
-    {
-      ...orderValues(values, 'user'),
-      deliveryMethod: selectedDeliveryMethod.title,
-      cart: [...AllcartItems],
-    }
-  )
+  return axios.post('http://localhost:3000/api/orderConfirm', {
+    ...orderValues(values, 'user'),
+    deliveryMethod: selectedDeliveryMethod.title,
+    cart: [...AllcartItems],
+  })
 }
 
 export default addOrder

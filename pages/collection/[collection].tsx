@@ -39,9 +39,7 @@ export default function Example({ prods }: { prods: Product[] }) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await axios.get(
-    'https://ecommerce-jb6nt0gsg-marwan-98.vercel.app/api/collections'
-  )
+  const res = await axios.get('http://localhost:3000/api/collections')
   const collections: Collection[] = res.data
   return {
     paths: collections.map((collec) => {
@@ -53,7 +51,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const res = await axios.get(
-    `https://ecommerce-jb6nt0gsg-marwan-98.vercel.app/api/collection/${params?.collection}`
+    `http://localhost:3000/api/collection/${params?.collection}`
   )
   const prods: Product[] = res.data
   return {
