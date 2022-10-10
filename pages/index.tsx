@@ -36,7 +36,7 @@ export const getStaticProps: GetStaticProps = async () => {
     Buffer.from(process.env.GOOGLE_SERVICE_KEY!, 'base64').toString()
   )
   let res: Product[] = []
-  await new Promise((res) => setTimeout(res, 60000))
+  await new Promise((res) => setTimeout(res, 50000))
   await extractSheets(
     {
       spreadsheetKey: '1GSLrLTt1dya45r9NYXUQeEUPp_Q_Fn1x-gGgrH3UzTI',
@@ -52,7 +52,7 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   )
   let res2: Collection[] = []
-  await new Promise((res) => setTimeout(res, 60000))
+  await new Promise((res) => setTimeout(res, 50000))
   await extractSheets(
     {
       spreadsheetKey: '1GSLrLTt1dya45r9NYXUQeEUPp_Q_Fn1x-gGgrH3UzTI',
