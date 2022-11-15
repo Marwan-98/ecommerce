@@ -6,7 +6,7 @@ const addOrder = (
   selectedDeliveryMethod: any,
   AllcartItems: any
 ) => {
-  return axios.post('http://localhost:3000/api/orderConfirm', {
+  return axios.post('/api/orderConfirm', {
     ...orderValues(values, 'user'),
     deliveryMethod: selectedDeliveryMethod.title,
     cart: [...AllcartItems],
